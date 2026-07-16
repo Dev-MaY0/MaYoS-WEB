@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaYoS Client - Official</title>
+    <style>
+        /* --- 基本設定（ダークテーマ） --- */
+        :root {
+            --bg-color: #05070a;
+            --text-main: #ffffff;
+            --text-sub: #7a828e;
+            --accent-color: #7dd3fc; /* 自然で美しいライトブルー */
+            --btn-bg: rgba(255, 255, 255, 0.07);
+            --btn-hover: rgba(255, 255, 255, 0.15);
+            --modal-bg: #0f131a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* --- 背景の透かしロゴ効果（画像中央の「N」のようなエフェクト） --- */
+        body::before {
+            content: "M"; /* MaYoSの頭文字 */
+            position: absolute;
+            font-size: 55vw;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.02); /* 極めて薄い白 */
+            font-family: 'Arial Black', sans-serif;
+            z-index: 1;
+            pointer-events: none;
+            user-select: none;
+            /* ぼかしエフェクトで画像のような雰囲気を再現 */
+            filter: blur(15px);
+            text-shadow: 0 0 100px rgba(125, 211, 252, 0.05);
+        }
+
+        /* --- メインコンテンツ容器 --- */
+        .container {
+            text-align: center;
+            z-index: 2; /* 背景ロゴより手前に配置 */
+            animation: fadeIn 1.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- タイトルエリア --- */
+        .title {
+            font-size: 3.2rem;
+            font-weight: 500;
+            color: var(--accent-color);
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            text-shadow: 0 0 30px rgba(125, 211, 252, 0.2);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-main);
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* --- ボタンエリア --- */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 50px;
+        }
+
+        .btn {
+            background-color: var(--btn-bg);
+            color: var(--text-main);
+            padding: 12px 30px;
+            font-size: 0.95rem;
+            text-decoration: none;
+            border-radius: 30px; /* 画像のような丸みのあるボタン */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            backdrop-filter: blur(5px); /* 背景透過ガラス効果 */
+        }
+
+        .btn:hover {
+            background-color: var(--btn-hover);
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-1px);
+        }
+
+        /* --- フッタークレジット --- */
+        footer {
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            line-height: 1.8;
+            letter-spacing: 0.5px;
+        }
+
+        footer .author {
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+
+        /* --- ポップアップ（モーダル）のスタイル --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal {
+            background-color: var(--modal-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 35px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal h2 {
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+
+        .modal p {
+            color: var(--text-sub);
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+
+        .dl-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .dl-link {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 14px 20px;
+            border-radius: 8px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .dl-link:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .dl-link span {
+            font-size: 0.75rem;
+            font-weight: normal;
+            color: var(--text-sub);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-sub);
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-top: 10px;
+        }
+        .close-btn:hover {
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- メイン画面 -->
+    <div class="container">
+        <h1 class="title">MaYoS Client</h1>
+        <div class="subtitle">Public Released! 🚀</div>
+
+        <div class="button-group">
+            <!-- JavaScript発火用に id="dl-btn" を付与 -->
+            <button class="btn" id="dl-btn">Download</button>
+            <!-- 編集エリア: 各種SNSのリンクURLを href に設定してください -->
+            <a href="https://discord.gg/wssc2pWmMy" class="btn" target="_blank">Discord</a>
+            <a href="https://github.com/Dev-MaY0/MaYosClient" class="btn" target="_blank">Github</a>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 MaYoS Client. All rights reserved.</p>
+            <p class="author">Made by MaYo</p>
+        </footer>
+    </div>
+
+    <!-- ダウンロード選択ポップアップ（初期状態は非表示） -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal">
+            <h2>Select Download Type</h2>
+            <p>ご利用の環境に合わせてダウンロード形式を選択してください。</p>
+            
+            <div class="dl-options">
+                <!-- 編集エリア: href の「#」を実際のファイルダウンロードURLに書き換えてください -->
+                <a href="Download/MaYoLauncher.exe" class="dl-link">
+                    🚀 Launcher をダウンロード <span>.exe (自動起動)</span>
+                </a>
+                <a href="Download/MaYos.dll" class="dl-link">
+                    📄 DLL 単体をダウンロード <span>.dll (手動インジェクション)</span>
+                </a>
+            </div>
+
+            <button class="close-btn" id="close-btn">キャンセル</button>
+        </div>
+    </div>
+
+    <!-- JavaScript: ポップアップの開閉制御 -->
+    <script>
+        const dlBtn = document.getElementById('dl-btn');
+        const modalOverlay = document.getElementById('modal-overlay');
+        const closeBtn = document.getElementById('close-btn');
+
+        // Downloadボタンを押したらポップアップを表示
+        dlBtn.addEventListener('click', () => {
+            modalOverlay.classList.add('active');
+        });
+
+        // キャンセルボタンを押したらポップアップを閉じる
+        closeBtn.addEventListener('click', () => {
+            modalOverlay.classList.remove('active');
+        });
+
+        // 背景の黒い部分をクリックしても閉じるようにする
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                modalOverlay.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
